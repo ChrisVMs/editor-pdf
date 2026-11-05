@@ -1,0 +1,73 @@
+﻿<Window x:Class="Escritor.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:wv2="clr-namespace:Microsoft.Web.WebView2.Wpf;assembly=Microsoft.Web.WebView2.Wpf"
+        Title="Escritor" Height="720" Width="1200" Background="{DynamicResource Fondo}">
+    <DockPanel Margin="8">
+        <!-- Barra superior -->
+        <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Margin="0,0,0,8">
+            <Button Content="Nuevo" Click="Nuevo_Click" Padding="10,4" Margin="0,0,4,0"/>
+            <Button Content="Abrir" Click="Abrir_Click" Padding="10,4" Margin="0,0,4,0"/>
+            <Button Content="Guardar" Click="Guardar_Click" Padding="10,4" Margin="0,0,16,0"/>
+            <Button Content="Vista previa" Click="Preview_Click" Padding="10,4" Margin="0,0,4,0"/>
+            <Button Content="Exportar PDF" Click="Exportar_Click" Padding="10,4" Margin="0,0,16,0"/>
+            <Button x:Name="BotonTema" Click="Tema_Click" Padding="10,4"/>
+        </StackPanel>
+
+        <DockPanel DockPanel.Dock="Top" Margin="0,0,0,8">
+            <TextBlock Text="Título:" VerticalAlignment="Center" Margin="0,0,8,0" FontWeight="Bold"/>
+            <TextBox Text="{Binding Titulo, UpdateSourceTrigger=PropertyChanged}" FontSize="18"/>
+        </DockPanel>
+
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="220"/>
+                <ColumnDefinition Width="5"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="5"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <!-- Capítulos -->
+            <DockPanel Grid.Column="0">
+                <UniformGrid DockPanel.Dock="Top" Columns="4" Margin="0,0,0,4" Height="28">
+                    <Button Content="+" Click="Agregar_Click" ToolTip="Agregar capítulo"/>
+                    <Button Content="−" Click="Quitar_Click" ToolTip="Quitar capítulo"/>
+                    <Button Content="▲" Click="Subir_Click" ToolTip="Subir"/>
+                    <Button Content="▼" Click="Bajar_Click" ToolTip="Bajar"/>
+                </UniformGrid>
+                <ListBox x:Name="Lista" ItemsSource="{Binding Capitulos}" DisplayMemberPath="Nombre"/>
+            </DockPanel>
+
+            <GridSplitter Grid.Column="1" HorizontalAlignment="Stretch"/>
+
+            <!-- Editor del capítulo -->
+            <TextBlock Grid.Column="2" Text="Agrega un capítulo con + para empezar a escribir."
+                       HorizontalAlignment="Center" VerticalAlignment="Center"
+                       Foreground="{DynamicResource TextoSuave}"/>
+            <DockPanel Grid.Column="2" DataContext="{Binding SelectedItem, ElementName=Lista}">
+                <DockPanel.Style>
+                    <Style TargetType="DockPanel">
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding SelectedItem, ElementName=Lista}" Value="{x:Null}">
+                                <Setter Property="Visibility" Value="Collapsed"/>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </DockPanel.Style>
+                <DockPanel DockPanel.Dock="Top" Margin="0,0,0,4">
+                    <TextBlock Text="Capítulo:" VerticalAlignment="Center" Margin="0,0,8,0"/>
+                    <TextBox Text="{Binding Nombre, UpdateSourceTrigger=PropertyChanged}" FontSize="15"/>
+                </DockPanel>
+                <TextBlock x:Name="Contador" DockPanel.Dock="Bottom" Foreground="{DynamicResource TextoSuave}" Margin="0,4,0,0"/>
+                <TextBox x:Name="Editor" Text="{Binding Texto, UpdateSourceTrigger=PropertyChanged}"
+                         AcceptsReturn="True" TextWrapping="Wrap" FontFamily="Georgia" FontSize="14"
+                         VerticalScrollBarVisibility="Auto" TextChanged="Editor_TextChanged"/>
+            </DockPanel>
+
+            <GridSplitter Grid.Column="3" HorizontalAlignment="Stretch" Panel.ZIndex="1"/>
+
+            <wv2:WebView2 x:Name="Visor" Grid.Column="4"/>
+        </Grid>
+    </DockPanel>
+</Window>
